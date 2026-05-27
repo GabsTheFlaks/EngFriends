@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Custom colors based on the design */
+  --color-eng-blue: #0A2540; /* Dark primary blue */
+  --color-eng-ice: #F0F4F8;  /* Light background */
+}
+
+body {
+  @apply bg-eng-ice text-slate-800 font-sans antialiased;
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-1.5rem); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes slideUp {
+  0% { transform: translateY(2rem); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(-10deg); }
+  30% { transform: rotate(8deg); }
+  45% { transform: rotate(-6deg); }
+  60% { transform: rotate(4deg); }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-slide-up {
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+.animate-wiggle {
+  animation: wiggle 1s ease-in-out infinite;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  user-select: none;
+}
+
+input, textarea, p {
+  user-select: auto;
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
