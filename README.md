@@ -1,7 +1,6 @@
 <div align="center">
-  <img src="EngFriends/logo.svg" alt="Eng Friends Logo" width="120" />
+  <img src="logo.svg" alt="Eng Friends Logo" width="600" />
 
-  # 🎓 Eng friends
 
   **A plataforma definitiva de estudos, ferramentas, fóruns e networking para estudantes de engenharia.**
   
