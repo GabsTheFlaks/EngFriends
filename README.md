@@ -56,7 +56,7 @@ Siga o passo a passo abaixo para rodar o Eng Board na sua máquina:
 ### 1. Clonar o repositório
 ```bash
 git clone https://github.com/seu-usuario/EngFriends.git
-cd eng-board
+cd engfriends
 ```
 
 ### 2. Instalar as dependências
@@ -108,7 +108,7 @@ Follow the steps below to run Eng Board on your machine:
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/your-username/EngFriends.git
-cd eng-board
+cd engfriends
 ```
 
 ### 2. Install dependencies
