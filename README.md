@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="public/logo.svg" alt="Eng Board Logo" width="120" />
+  <img src="public/logo.svg" alt="Eng Friends Logo" width="120" />
 
-  # 🎓 Eng Board
+  # 🎓 Eng friends
 
   **A plataforma definitiva de estudos, ferramentas, fóruns e networking para estudantes de engenharia.**
   
@@ -13,8 +13,8 @@
     <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready" />
-    ![Testing-Library](https://img.shields.io/badge/-TestingLibrary-%23E33332?style=for-the-badge&logo=testing-library&logoColor=white)
-    ![Vitest](https://img.shields.io/badge/-Vitest-272D31?style=for-the-badge&logo=vitest&logoColor=FCC72B)
+    <img src="(https://img.shields.io/badge/-TestingLibrary-%23E33332?style=for-the-badge&logo=testing-library&logoColor=white)" />
+    <img src="(https://img.shields.io/badge/-Vitest-272D31?style=for-the-badge&logo=vitest&logoColor=FCC72B)" />
   </p>
   
   <p align="center">
@@ -29,7 +29,7 @@
 
 ## 📖 Sobre o Projeto
 
-**Eng Board** é um aplicativo Progressivo (PWA) moderno e completo focado em conectar estudantes de engenharia. Ele oferece um espaço seguro para discussões acadêmicas, troca de materiais, chats em tempo real e ferramentas essenciais para o dia a dia do estudante. O aplicativo conta com um design limpo, focado em alta legibilidade e acesso rápido a funcionalidades.
+**Eng friends** é um aplicativo Progressivo (PWA) moderno e completo focado em conectar estudantes de engenharia. Ele oferece um espaço seguro para discussões acadêmicas, troca de materiais, chats em tempo real e ferramentas essenciais para o dia a dia do estudante. O aplicativo conta com um design limpo, focado em alta legibilidade e acesso rápido a funcionalidades.
 
 ## ✨ Funcionalidades
 
@@ -55,7 +55,7 @@ Siga o passo a passo abaixo para rodar o Eng Board na sua máquina:
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/seu-usuario/eng-board.git
+git clone https://github.com/seu-usuario/EngFriends.git
 cd eng-board
 ```
 
@@ -81,7 +81,7 @@ npm run build
 
 ## 📖 About the Project
 
-**Eng Board** is a modern and comprehensive Progressive Web App (PWA) focused on connecting engineering students. It provides a safe space for academic discussions, material exchange, real-time chats, and essential tools for a student's daily life. The application features a clean design, focused on high readability and quick access to functionalities.
+**Eng Friends** is a modern and comprehensive Progressive Web App (PWA) focused on connecting engineering students. It provides a safe space for academic discussions, material exchange, real-time chats, and essential tools for a student's daily life. The application features a clean design, focused on high readability and quick access to functionalities.
 
 ## ✨ Features
 
@@ -107,7 +107,7 @@ Follow the steps below to run Eng Board on your machine:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/eng-board.git
+git clone https://github.com/your-username/EngFriends.git
 cd eng-board
 ```
 
@@ -130,6 +130,6 @@ npm run build
 ---
 
 <div align="center">
-  <p>Feito com ❤️ para facilitar a vida de estudantes de engenharia.</p>
-  <p>Made with ❤️ to make engineering students' lives easier.</p>
+  <p>Feito com ❤️ para facilitar a vida de estudantes de engenharia Produção.</p>
+  <p>Made with ❤️ to make industrial engineering students lives easier.</p>
 </div>
