@@ -1,0 +1,6 @@
+{
+  "name": "Eng Friends",
+  "description": "Uma plataforma de comunidade e networking para estudantes de engenharia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
