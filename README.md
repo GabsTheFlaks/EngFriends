@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.svg" alt="Eng Friends Logo" width="120" />
+  <img src="EngFriends/logo.svg" alt="Eng Friends Logo" width="120" />
 
   # 🎓 Eng friends
 
