@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 115" width="520" height="115" role="img" aria-label="Eng Friends Logo">
+  <defs>
+    <radialGradient id="iconBg" cx="38%" cy="32%" r="72%">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#050d1c"/>
+    </radialGradient>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ICON BLOCK -->
+  <rect x="7" y="7" width="101" height="101" rx="20" ry="20" fill="url(#iconBg)"/>
+  <rect x="7" y="7" width="101" height="101" rx="20" ry="20"
+        fill="none" stroke="#1d4ed8" stroke-width="1" opacity="0.35"/>
+  <polygon points="95,54 76,87 38,87 19,54 38,21 76,21"
+           fill="none" stroke="#3B82F6" stroke-width="0.9" opacity="0.22"/>
+  <polygon points="57,24 81,40 57,56 33,40"
+           fill="rgba(255,255,255,0.055)"
+           stroke="white" stroke-width="2.4" stroke-linejoin="round"/>
+  <circle cx="57" cy="24" r="3" fill="#60A5FA"/>
+  <path d="M 36 45 Q 57 66 78 45"
+        fill="none" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+  <line x1="81" y1="40" x2="90" y2="53"
+        stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="90" cy="57" r="3.5" fill="#60A5FA"/>
+  <line x1="41" y1="79" x2="57" y2="88" stroke="#60A5FA" stroke-width="1.4" opacity="0.4"/>
+  <line x1="57" y1="88" x2="73" y2="79" stroke="#60A5FA" stroke-width="1.4" opacity="0.4"/>
+  <line x1="41" y1="79" x2="73" y2="79" stroke="#60A5FA" stroke-width="1.4" opacity="0.4"/>
+  <circle cx="41" cy="79" r="3.5" fill="#60A5FA"/>
+  <circle cx="57" cy="88" r="3.5" fill="#60A5FA"/>
+  <circle cx="73" cy="79" r="3.5" fill="#60A5FA"/>
+
+  <!-- WORDMARK -->
+  <text x="127" y="57"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="44" font-weight="800"
+        fill="#0F172A" letter-spacing="-1">Eng</text>
+
+  <line x1="225" y1="22" x2="225" y2="68"
+        stroke="#CBD5E1" stroke-width="1.2"/>
+
+  <text x="237" y="57"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="38" font-weight="300"
+        fill="url(#blueGrad)" letter-spacing="4">Friends</text>
+
+  <line x1="127" y1="68" x2="508" y2="68"
+        stroke="url(#blueGrad)" stroke-width="1" opacity="0.3"/>
+
+  <!-- Tagline — viewBox largo o suficiente para não cortar -->
+  <text x="127" y="83"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="9.5" font-weight="400"
+        fill="#94A3B8" letter-spacing="2.8">PLATAFORMA PARA ESTUDANTES DE ENGENHARIA</text>
+</svg>
