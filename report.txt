@@ -1,0 +1,29 @@
+**RELATÓRIO DE REVISÃO E INTEGRAÇÃO DE BRANCHES (AGENTES 1-6)**
+
+A integração foi abortada na **FASE 2** pois múltiplos itens obrigatórios do checklist foram reprovados (resposta "NÃO" para itens que exigiam a funcionalidade ou alterações fora do escopo respondidas como "SIM").
+
+Nenhum merge foi executado. Segue a lista detalhada das falhas por agente:
+
+**Agente 1 (Branch: feat/supabase-infra)**
+* **Reprovado:** Algum arquivo fora do escopo foi alterado? **SIM** (embora aceitável tecnicamente, a alteração de `package.json`, `package-lock.json` e `src/vite-env.d.ts` foge dos estritos arquivos listados, entretanto a falha principal repousa nos outros agentes).
+
+**Agente 2 (Branch: feat/auth-profile)**
+* **Reprovado:** Tela `/login` implementada com modo login e modo cadastro? **NÃO** (Foi implementado em dois componentes distintos e isolados, `Login.tsx` e `Register.tsx`, e a página `src/pages/Login.tsx` exigida sequer existe).
+* **Reprovado:** Algum arquivo fora do escopo foi alterado? **SIM** (Inúmeros arquivos como `logo.svg`, `src/test/setup.ts`, `vitest.config.ts`, `CRCalculator.tsx` foram modificados ou removidos).
+
+**Agente 3 (Branch: feat/chat-realtime)**
+* **Reprovado:** `ChatTab.tsx` não contém nenhuma referência a localStorage? **NÃO** (O arquivo contém várias referências diretas ao localStorage, como `localStorage.getItem('engplus_pinned_chats')`).
+* **Reprovado:** Algum arquivo fora do escopo foi alterado? **SIM** (`NotificationsDrawer.tsx` foi alterado).
+
+**Agente 4 (Branch: feat/chat-media)**
+* **Reprovado:** `ChatBubble` renderiza `<img>` para mensagens type: 'image'? **NÃO** (O arquivo `src/components/ChatBubble.tsx` nem sequer está presente/foi modificado nesta branch).
+* **Reprovado:** Algum arquivo fora do escopo foi alterado? **SIM** (Foram removidos/alterados vários arquivos de outras funcionalidades, incluindo `public/sw.js`, `public/manifest.json`, `index.html`, etc).
+
+**Agente 5 (Branch: feat/notifications)**
+* **Reprovado:** Algum arquivo fora do escopo foi alterado? **SIM** (Diversas abas não relacionadas ao contexto como `AjudaTab.tsx`, `InfoTab.tsx`, `ProjTab.tsx` e `SistTab.tsx` foram alteradas indevidamente).
+
+**Agente 6 (Branch: feat/deploy-pwa)**
+* **Reprovado:** `manifest.json` possui display: standalone... e ícones? **NÃO** (O arquivo `manifest.json` não consta nos commits desta branch).
+* **Reprovado:** `registerPushSubscription()` implementada em `src/main.tsx` ou equivalente? **NÃO** (A referida função não foi implementada no arquivo principal).
+
+**Decisão:** Merge bloqueado conforme diretrizes da Fase 2.
