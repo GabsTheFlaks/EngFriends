@@ -1,4 +1,3 @@
-
 <div align="center">
   <img src="logo.svg" alt="Eng Friends Logo" width="600" />
 
@@ -13,8 +12,8 @@
     <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready" />
-    <img src="(https://img.shields.io/badge/-TestingLibrary-%23E33332?style=for-the-badge&logo=testing-library&logoColor=white)" />
-    <img src="(https://img.shields.io/badge/-Vitest-272D31?style=for-the-badge&logo=vitest&logoColor=FCC72B)" />
+    <img src="https://img.shields.io/badge/-TestingLibrary-%23E33332?style=for-the-badge&logo=testing-library&logoColor=white" alt="Testing Library" />
+    <img src="https://img.shields.io/badge/-Vitest-272D31?style=for-the-badge&logo=vitest&logoColor=FCC72B" alt="Vitest" />
   </p>
   
   <p align="center">
@@ -51,12 +50,12 @@
 
 ## 🛠️ Como rodar o projeto localmente
 
-Siga o passo a passo abaixo para rodar o Eng Board na sua máquina:
+Siga o passo a passo abaixo para rodar o Eng Friends na sua máquina:
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/seu-usuario/EngFriends.git
-cd engfriends
+git clone https://github.com/GabsTheFlaks/EngFriends.git
+cd EngFriends
 ```
 
 ### 2. Instalar as dependências
@@ -103,12 +102,12 @@ npm run build
 
 ## 🛠️ How to run the project locally
 
-Follow the steps below to run Eng Board on your machine:
+Follow the steps below to run Eng Friends on your machine:
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/EngFriends.git
-cd engfriends
+git clone https://github.com/GabsTheFlaks/EngFriends.git
+cd EngFriends
 ```
 
 ### 2. Install dependencies
