@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { supabase } from '../../lib/supabaseClient';
+import { useAuth } from '../../hooks/useAuth';
+import { NotificationBell } from '../NotificationBell';
 import { Search, Plus, ChevronLeft, Send, X, MoreVertical, Image, Paperclip, Smile, CheckCheck, MessagesSquare, Pin, BellOff, Trash2, LogOut } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,6 +22,7 @@ interface ChatTabProps {
 }
 
 export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProps) {
+  const { user: authUser } = useAuth();
   const [activeChat, setActiveChat] = useState<number | null>(null);
   const [activeFilter, setActiveFilter] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
@@ -237,7 +241,7 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
     setInputText(prev => prev + emoji);
   };
 
-  const handleSendMessage = (e?: React.FormEvent) => {
+  const handleSendMessage = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!inputText.trim() || !activeChat) return;
 
@@ -260,6 +264,32 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
         ? { ...c, message: `Você: ${newMsg.text}`, time: 'Agora', unread: 0 }
         : c
     ));
+
+
+    // Insert notification
+    if (authUser?.id) {
+      try {
+        const { data: senders } = await supabase
+          .from('messages')
+          .select('sender_id')
+          .eq('room_id', activeChat)
+          .neq('sender_id', authUser.id);
+
+        const uniqueSenderIds = [...new Set(senders?.map(s => s.sender_id) ?? [])];
+
+        if (uniqueSenderIds.length > 0) {
+          await supabase.from('notifications').insert(
+            uniqueSenderIds.map(recipientId => ({
+              user_id: recipientId,
+              title: `Nova mensagem em #${activeChat}`,
+              body: `${user.name}: ${inputText.trim().slice(0, 80)}`,
+            }))
+          );
+        }
+      } catch (err) {
+        console.error('Failed to create notifications for new message', err);
+      }
+    }
 
     setInputText('');
   };
@@ -679,7 +709,8 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
           </button>
 
           {/* USER PROFILE AVATAR PLACED EXACTLY NEXT TO THE SEARCH MAGNIFYING GLASS */}
-          <button
+          <NotificationBell isDarkMode={isDarkMode} />
+            <button
             onClick={onOpenProfile}
             className={`w-8 h-8 rounded-xl overflow-hidden border flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 ${isDarkMode ? 'border-slate-800 bg-slate-800' : 'border-slate-200 bg-slate-100'}`}
             aria-label="Perfil do Usuário"

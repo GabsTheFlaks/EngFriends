@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { NotificationBell } from '../NotificationBell';
 import { LayoutGrid, FileText, Calendar, ScrollText, Library, FlaskConical, HeadphonesIcon, ChevronRight, ChevronLeft, X, ExternalLink, Cog, Play, Pause, RotateCcw } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 import toast from 'react-hot-toast';
@@ -210,7 +211,8 @@ export function SistTab({ user, onOpenProfile, isDarkMode = false }: SistTabProp
         <h1 className={`text-2xl font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Sistemas</h1>
         <div className="flex gap-3 items-center">
           {/* USER PROFILE IN SYSTEMS HEADER */}
-          <button
+          <NotificationBell isDarkMode={isDarkMode} />
+            <button
             onClick={onOpenProfile}
             className={`w-8 h-8 rounded-full overflow-hidden border flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 ${isDarkMode ? 'border-slate-750 bg-slate-800' : 'border-slate-200 bg-slate-100'}`}
             aria-label="Perfil do Usuário"

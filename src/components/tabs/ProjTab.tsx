@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { NotificationBell } from '../NotificationBell';
 import { Search, Plus, MoreHorizontal, X } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 
@@ -115,7 +116,8 @@ export function ProjTab({ user, onOpenProfile, isDarkMode = false }: ProjTabProp
         <h1 className={`text-2xl font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Projetos</h1>
         <div className="flex gap-3.5 items-center">
           {/* USER PROFILE AVATAR PLACED NEXT TO THE SEARCH LAYOUT SECTION */}
-          <button
+          <NotificationBell isDarkMode={isDarkMode} />
+            <button
             onClick={onOpenProfile}
             className={`w-8 h-8 rounded-full overflow-hidden border flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 ${isDarkMode ? 'border-slate-750 bg-slate-800' : 'border-slate-200 bg-slate-100'}`}
             aria-label="Perfil do Usuário"
