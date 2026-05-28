@@ -3,15 +3,42 @@ import { Mail, Lock, Eye, EyeOff, User, Calendar, Hash } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { AppLogo } from '../ui/AppLogo';
+import { supabase } from '../../lib/supabaseClient';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-interface RegisterProps {
-  onNavigateLogin: () => void;
-  onRegister: () => void;
-}
-
-export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
+export function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username
+        }
+      }
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Cadastro realizado! Verifique seu email ou faça login.');
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -22,12 +49,14 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
         <h1 className="text-[22px] font-semibold text-slate-900 mt-2">Cadastro de aluno</h1>
       </div>
 
-      <form className="w-full space-y-4" onSubmit={(e) => { e.preventDefault(); onRegister(); }}>
+      <form className="w-full space-y-4" onSubmit={handleRegister}>
         <Input
-          label="Nome Completo"
-          placeholder="Ex: Rodrigo da Silva Oliveira"
+          label="Username"
+          placeholder="Ex: rodrigosilva"
           type="text"
           icon={User}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
 
@@ -36,22 +65,8 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
           placeholder="nome.dominio@gmail.com"
           type="email"
           icon={Mail}
-          required
-        />
-
-        <Input
-          label="Número de Matrícula"
-          placeholder="0000000000000"
-          type="text"
-          icon={Hash}
-          required
-        />
-
-        <Input
-          label="Data de Nascimento"
-          placeholder="DD/MM/YYYY"
-          type="text"
-          icon={Calendar}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
 
@@ -59,6 +74,8 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
           label="Senha"
           placeholder="Coloque a senha da sua conta"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           icon={Lock}
           required
           rightIcon={
@@ -90,8 +107,8 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
         />
 
         <div className="pt-4">
-          <Button type="submit" fullWidth>
-            Criar conta
+          <Button type="submit" fullWidth disabled={isLoading}>
+            {isLoading ? 'Criando...' : 'Criar conta'}
           </Button>
         </div>
       </form>
@@ -101,7 +118,7 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
           Já possui uma conta?{' '}
           <button
             type="button"
-            onClick={onNavigateLogin}
+            onClick={() => navigate('/login')}
             className="font-medium text-emerald-600 hover:text-emerald-500 hover:underline transition-colors"
           >
             Entre aqui!
