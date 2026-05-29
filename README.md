@@ -11,6 +11,7 @@
     <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
     <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
     <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white" alt="PWA Ready" />
     <img src="https://img.shields.io/badge/-TestingLibrary-%23E33332?style=for-the-badge&logo=testing-library&logoColor=white" alt="Testing Library" />
     <img src="https://img.shields.io/badge/-Vitest-272D31?style=for-the-badge&logo=vitest&logoColor=FCC72B" alt="Vitest" />
@@ -32,16 +33,19 @@
 
 ## ✨ Funcionalidades
 
+- **🔐 Autenticação e Perfis:** Login seguro via Supabase com avatares customizáveis.
 - **🗂️ Gestão de Disciplinas:** Organização e fluxo de estudos.
 - **💬 Fóruns de Discussão:** Pergunte e responda dúvidas sobre matérias específicas.
-- **🗣️ Chat Acadêmico:** Comunique-se rapidamente com seus grupos de estudo (Mensagens diretas e canais).
-- **🔔 Central de Notificações:** Sistema de notificações inteligente e de fácil arquivamento.
-- **📱 PWA (Progressive Web App):** Instalável na maioria dos dispositivos através de navegadores (Chrome, Safari, Edge) com suporte a acesso off-line via Service Workers.
+- **🗣️ Chat Acadêmico em Tempo Real:** Comunique-se rapidamente com seus grupos de estudo (Mensagens diretas e canais) com envio de imagens e visualizador.
+- **🔔 Central de Notificações In-App:** Sistema de notificações inteligente e de fácil arquivamento.
+- **📱 PWA (Progressive Web App):** Instalável na maioria dos dispositivos através de navegadores, com acesso rápido.
+- **🔔 Notificações Push:** Suporte a notificações Web Push para manter você atualizado fora do app.
 - **🌗 Tema Escuro/Claro:** Experiência consistente e confortável em qualquer luminosidade.
 
 ## 🚀 Tecnologias Integradas
 
 - **Front-end:** [React](https://reactjs.org/) (Hooks, Functional Components)
+- **Backend-as-a-Service:** [Supabase](https://supabase.com/) - Autenticação, Banco de Dados em Tempo Real (PostgreSQL) e Storage para mídias.
 - **Build Tool:** [Vite](https://vitejs.dev/) - Tempo de carregamento incrivelmente rápido e HMR.
 - **Linguagem:** [TypeScript](https://www.typescriptlang.org/) - Escalabilidade e segurança na escrita de tipos.
 - **Estilização:** [Tailwind CSS](https://tailwindcss.com/) - Utility-first e Design responsivo.
@@ -84,16 +88,19 @@ npm run build
 
 ## ✨ Features
 
+- **🔐 Authentication & Profiles:** Secure login via Supabase with customizable avatars.
 - **🗂️ Subject Management:** Organization and study workflow.
 - **💬 Discussion Forums:** Ask and answer questions about specific subjects.
-- **🗣️ Academic Chat:** Communicate quickly with your study groups (Direct messages and channels).
-- **🔔 Notification Center:** Smart notification system with easy archiving.
-- **📱 PWA (Progressive Web App):** Installable on most devices via browsers (Chrome, Safari, Edge) with offline access support through Service Workers.
+- **🗣️ Real-time Academic Chat:** Communicate quickly with your study groups (Direct messages and channels) with image uploads and lightbox viewer.
+- **🔔 In-App Notification Center:** Smart notification system with easy archiving.
+- **📱 PWA (Progressive Web App):** Installable on most devices via browsers for quick access.
+- **🔔 Push Notifications:** Web Push support to keep you updated outside the app.
 - **🌗 Dark/Light Theme:** Consistent and comfortable experience in any lighting.
 
 ## 🚀 Integrated Technologies
 
 - **Front-end:** [React](https://reactjs.org/) (Hooks, Functional Components)
+- **Backend-as-a-Service:** [Supabase](https://supabase.com/) - Auth, Real-time Database (PostgreSQL), and Media Storage.
 - **Build Tool:** [Vite](https://vitejs.dev/) - Blazing fast load times and HMR.
 - **Language:** [TypeScript](https://www.typescriptlang.org/) - Scalability and type safety.
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/) - Utility-first and responsive design.
