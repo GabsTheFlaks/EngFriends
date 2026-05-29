@@ -14,7 +14,6 @@ import toast from 'react-hot-toast';
 import { NotificationsDrawer, NotificationItem } from './components/layout/NotificationsDrawer';
 import { TabType } from './types';
 import { Bell, X, Info } from 'lucide-react';
-import { registerPushSubscription } from './lib/push';
 
 type ViewState = 'login' | 'register' | 'app';
 
@@ -157,14 +156,8 @@ export default function App() {
     avatar: ''
   });
 
-  const handleLogin = () => {
-    setCurrentView('app');
-    registerPushSubscription().catch(err => console.error("Push registration failed", err));
-  };
-  const handleRegister = () => {
-    setCurrentView('app');
-    registerPushSubscription().catch(err => console.error("Push registration failed", err));
-  };
+  const handleLogin = () => setCurrentView('app');
+  const handleRegister = () => setCurrentView('app');
 
   const handleDeleteAccount = () => {
     toast.success('Sua conta foi excluída com sucesso da base de dados local do Eng+.');
