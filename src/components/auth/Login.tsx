@@ -3,14 +3,35 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { AppLogo } from '../ui/AppLogo';
+import { supabase } from '../../lib/supabaseClient';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  onNavigateRegister: () => void;
-  onLogin: () => void;
-}
-
-export function Login({ onNavigateRegister, onLogin }: LoginProps) {
+export function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    setIsLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Login bem-sucedido!');
+      navigate('/');
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -21,12 +42,14 @@ export function Login({ onNavigateRegister, onLogin }: LoginProps) {
         <h1 className="text-[22px] font-semibold text-slate-900 mt-2">Acesse sua conta</h1>
       </div>
 
-      <form className="w-full space-y-5" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
+      <form className="w-full space-y-5" onSubmit={handleLogin}>
         <Input
           label="E-mail"
           placeholder="nome.dominio@gmail.com"
           type="email"
           icon={Mail}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
 
@@ -34,6 +57,8 @@ export function Login({ onNavigateRegister, onLogin }: LoginProps) {
           label="Senha"
           placeholder="Coloque a senha da sua conta"
           type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           icon={Lock}
           required
           rightIcon={
@@ -60,8 +85,8 @@ export function Login({ onNavigateRegister, onLogin }: LoginProps) {
         </div>
 
         <div className="pt-2">
-          <Button type="submit" fullWidth className="group">
-            <span>Entrar</span>
+          <Button type="submit" fullWidth className="group" disabled={isLoading}>
+            <span>{isLoading ? 'Entrando...' : 'Entrar'}</span>
             <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">→</span>
           </Button>
         </div>
@@ -72,7 +97,7 @@ export function Login({ onNavigateRegister, onLogin }: LoginProps) {
           Ainda não tem conta?{' '}
           <button
             type="button"
-            onClick={onNavigateRegister}
+            onClick={() => navigate('/register')}
             className="font-medium text-emerald-600 hover:text-emerald-500 hover:underline transition-colors"
           >
             Cadastre-se aqui!

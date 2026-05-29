@@ -2,15 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Search, Plus, ChevronLeft, Send, X, MoreVertical, Image, Paperclip, Smile, CheckCheck, MessagesSquare, Pin, BellOff, Trash2, LogOut } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 import { motion, AnimatePresence } from 'motion/react';
-
-interface ChatMessage {
-  id: number;
-  sender: string;
-  avatarColor?: string;
-  isMe: boolean;
-  text: string;
-  time?: string;
-}
+import { useChat } from '../../hooks/useChat';
+import { useAuth } from '../../hooks/useAuth';
+import { ChatBubble } from '../ChatBubble';
+import { supabase } from '../../lib/supabaseClient';
 
 interface ChatTabProps {
   user: UserProfile;
@@ -19,7 +14,9 @@ interface ChatTabProps {
 }
 
 export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProps) {
-  const [activeChat, setActiveChat] = useState<number | null>(null);
+  const { user: authUser } = useAuth();
+  const [activeChat, setActiveChat] = useState<string | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [activeFilter, setActiveFilter] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [inputText, setInputText] = useState('');
@@ -35,38 +32,37 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   // Load persistence for pins & mutes
-  const [pinnedChats, setPinnedChats] = useState<Record<number, boolean>>(() => {
-    const cached = localStorage.getItem('engplus_pinned_chats');
-    return cached ? JSON.parse(cached) : {};
-  });
-  const [mutedChats, setMutedChats] = useState<Record<number, boolean>>(() => {
-    const cached = localStorage.getItem('engplus_muted_chats');
-    return cached ? JSON.parse(cached) : {};
-  });
+  const [pinnedChats, setPinnedChats] = useState<Record<string, boolean>>({});
+  const [mutedChats, setMutedChats] = useState<Record<string, boolean>>({});
 
-  const [chatsList, setChatsList] = useState(() => {
-    const cached = localStorage.getItem('engplus_chats_list');
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return [
-      { id: 1, name: 'Alunos Eng.', message: 'João: Bora! 18h no auditório.', time: '14:05', unread: 2, color: 'bg-gradient-to-tr from-blue-600 to-indigo-600', initials: 'AE', members: 6 },
-      { id: 2, name: 'Estruturas I', message: 'João: Upload de arquivo', time: '13:42', unread: 0, color: 'bg-gradient-to-tr from-slate-700 to-slate-905', initials: 'E', members: 12 },
-      { id: 3, name: 'Cálculo II', message: 'Beatriz: Obrigada!', time: '12:30', unread: 0, color: 'bg-gradient-to-tr from-purple-500 to-indigo-505', initials: 'C', members: 8 },
-      { id: 4, name: 'Desenho Técnico', message: 'Lucas: Alguém pode me ajudar?', time: 'Ontem', unread: 0, color: 'bg-gradient-to-tr from-emerald-500 to-teal-600', initials: 'D', members: 4 },
-      { id: 5, name: 'Projeto SAE', message: 'Você: Perfeito!', time: 'Ontem', unread: 0, color: 'bg-gradient-to-tr from-orange-500 to-amber-600', initials: 'P', members: 5 },
-      { id: 6, name: 'Mecânica dos Sólidos', message: 'Rafael: Valeu!', time: 'Sex', unread: 0, color: 'bg-gradient-to-tr from-indigo-900 to-slate-950', initials: 'M', members: 9 },
-    ];
-  });
+  const [chatsList, setChatsList] = useState<any[]>([]);
 
-  // Sync chats to localStorage
+  // Fetch rooms from Supabase
   useEffect(() => {
-    localStorage.setItem('engplus_chats_list', JSON.stringify(chatsList));
-  }, [chatsList]);
+    supabase
+      .from('rooms')
+      .select('*')
+      .eq('type', 'channel')
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Error fetching rooms:', error);
+          return;
+        }
+        if (data) {
+          const mapped = data.map((room) => ({
+            id: room.id,
+            name: room.name,
+            message: room.description || 'Nenhuma mensagem',
+            time: '',
+            unread: 0,
+            color: 'bg-gradient-to-tr from-blue-600 to-indigo-600', // default fallback
+            initials: room.name.substring(0, 2).toUpperCase(),
+            members: 0,
+          }));
+          setChatsList(mapped);
+        }
+      });
+  }, []);
 
   const [showCreateChat, setShowCreateChat] = useState(false);
 
@@ -76,54 +72,6 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
   const [newChatType, setNewChatType] = useState<'grupo' | 'direto'>('grupo');
   const [newChatColor, setNewChatColor] = useState('bg-gradient-to-tr from-blue-500 to-indigo-550');
   const [newChatFirstMsg, setNewChatFirstMsg] = useState('');
-
-  // Dynamic threads dictionaries
-  const [chatThreads, setChatThreads] = useState<Record<number, ChatMessage[]>>(() => {
-    const cached = localStorage.getItem('engplus_chat_threads');
-    if (cached) {
-      try {
-        return JSON.parse(cached);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return {
-      1: [
-        { id: 1, sender: '@sophie', text: 'Pessoal, alguém vai na palestra hoje?', isMe: false, time: '14:01' },
-        { id: 2, sender: 'Você', text: 'Eu vou! Encontro vocês lá', isMe: true, time: '14:02' },
-        { id: 3, sender: '@joao', text: 'Bora! 18h no auditório.', isMe: false, time: '14:03' },
-        { id: 4, sender: 'Você', text: 'Combinado!', isMe: true, time: '14:04' },
-      ],
-      2: [
-        { id: 1, sender: '@joao', text: 'Amanhã temos que entregar o relatório da aula prática?', isMe: false, time: '13:30' },
-        { id: 2, sender: 'Você', text: 'Sim, o professor pediu para anexar no SUAP até as 23:59.', isMe: true, time: '13:35' },
-        { id: 3, sender: '@joao', text: 'Upload de arquivo: roteiro_aula_04.pdf', isMe: false, time: '13:42' }
-      ],
-      3: [
-        { id: 1, sender: '@beatriz', text: 'Conseguiu fazer a questão 5 de Limites?', isMe: false, time: '12:20' },
-        { id: 2, sender: 'Você', text: 'Sim! Usei a regra de L’Hôpital e simplifiquei a fração.', isMe: true, time: '12:24' },
-        { id: 3, sender: '@beatriz', text: 'Obrigada! Vou tentar assim.', isMe: false, time: '12:30' }
-      ],
-      4: [
-        { id: 1, sender: '@lucas', text: 'Alguém pode me ajudar a configurar a perspectiva de projeção no AutoCAD?', isMe: false, time: 'Ontem' },
-        { id: 2, sender: 'Você', text: 'Claro, dá uma olhada na aba de ferramentas de projeção isométrica.', isMe: true, time: 'Ontem' }
-      ],
-      5: [
-        { id: 1, sender: 'Você', text: 'Já organizei os planos para a aeronave SAE 2026', isMe: true, time: 'Ontem' },
-        { id: 2, sender: 'Você', text: 'Perfeito!', isMe: true, time: 'Ontem' }
-      ],
-      6: [
-        { id: 1, sender: '@rafael', text: 'A nota da P1 de mecânica dos sólidos já saiu?', isMe: false, time: 'Sex' },
-        { id: 2, sender: 'Você', text: 'Sim, está lançada no portal!', isMe: true, time: 'Sex' },
-        { id: 3, sender: '@rafael', text: 'Valeu!', isMe: false, time: 'Sex' }
-      ],
-    };
-  });
-
-  // Sync threads to localStorage
-  useEffect(() => {
-    localStorage.setItem('engplus_chat_threads', JSON.stringify(chatThreads));
-  }, [chatThreads]);
 
   const onlineMembers = [
     { name: 'Sophie', handle: '@sophie', color: 'bg-gradient-to-tr from-rose-400 to-pink-500', initials: 'S', active: true },
@@ -135,12 +83,13 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
   ];
 
   const activeChatData = chatsList.find((c: any) => c.id === activeChat);
-  const currentMessages = activeChat ? (chatThreads[activeChat] || []) : [];
+
+  const { messages, loading, typingUsers, sendMessage, sendTyping } = useChat(activeChat);
 
   // Scroll to bottom helper
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [currentMessages, activeChat]);
+  }, [messages, activeChat]);
 
   const handleSearchClick = () => {
     searchInputRef.current?.focus();
@@ -166,9 +115,7 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
   const handleTogglePinChat = () => {
     if (!activeChat) return;
     setPinnedChats(prev => {
-      const up = { ...prev, [activeChat]: !prev[activeChat] };
-      localStorage.setItem('engplus_pinned_chats', JSON.stringify(up));
-      return up;
+      return { ...prev, [activeChat]: !prev[activeChat] };
     });
     setShowChatOptions(false);
   };
@@ -176,19 +123,13 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
   const handleToggleMuteChat = () => {
     if (!activeChat) return;
     setMutedChats(prev => {
-      const up = { ...prev, [activeChat]: !prev[activeChat] };
-      localStorage.setItem('engplus_muted_chats', JSON.stringify(up));
-      return up;
+      return { ...prev, [activeChat]: !prev[activeChat] };
     });
     setShowChatOptions(false);
   };
 
   const handleClearCurrentChat = () => {
     if (!activeChat) return;
-    setChatThreads(prev => ({
-      ...prev,
-      [activeChat]: []
-    }));
     setChatsList((prev: any[]) => prev.map(c => c.id === activeChat ? { ...c, message: 'Nenhuma mensagem.', time: 'Limpo' } : c));
     setShowChatOptions(false);
   };
@@ -209,25 +150,6 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
     const file = e.target.files?.[0];
     if (!file || !activeChat) return;
 
-    const newMsg: ChatMessage = {
-      id: Date.now(),
-      sender: 'Você',
-      text: `📎 Arquivo: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`,
-      isMe: true,
-      time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setChatThreads(prev => ({
-      ...prev,
-      [activeChat]: [...(prev[activeChat] || []), newMsg]
-    }));
-
-    setChatsList((prev: any[]) => prev.map(c =>
-      c.id === activeChat
-        ? { ...c, message: `Você enviou o arquivo: ${file.name}`, time: 'Agora', unread: 0 }
-        : c
-    ));
-
     // Reset native input to support repeating same file
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -241,23 +163,12 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
     if (e) e.preventDefault();
     if (!inputText.trim() || !activeChat) return;
 
-    const newMsg: ChatMessage = {
-      id: Date.now(),
-      sender: 'Você',
-      text: inputText.trim(),
-      isMe: true,
-      time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setChatThreads(prev => ({
-      ...prev,
-      [activeChat]: [...(prev[activeChat] || []), newMsg]
-    }));
+    sendMessage(inputText.trim());
 
     // Update active row text in chat list overview
     setChatsList((prev: any[]) => prev.map(c =>
       c.id === activeChat
-        ? { ...c, message: `Você: ${newMsg.text}`, time: 'Agora', unread: 0 }
+        ? { ...c, message: `Você: ${inputText.trim()}`, time: 'Agora', unread: 0 }
         : c
     ));
 
@@ -282,22 +193,6 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
       initials: init.substring(0, 3),
       members: isDirect ? 0 : 4
     };
-
-    // If there is initial message, write to dynamic thread
-    if (newChatFirstMsg.trim()) {
-      setChatThreads(prev => ({
-        ...prev,
-        [newId]: [
-          {
-            id: Date.now(),
-            sender: 'Você',
-            text: newChatFirstMsg.trim(),
-            isMe: true,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-          }
-        ]
-      }));
-    }
 
     setChatsList([newChatObj, ...chatsList]);
     setShowCreateChat(false);
@@ -459,54 +354,14 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
             </span>
           </div>
 
-          {currentMessages.length > 0 ? (
-            currentMessages.map((msg) => {
-              const meta = getSenderMeta(msg.sender);
-              return (
-                <div
-                  key={msg.id}
-                  className={`flex gap-2.5 items-end ${msg.isMe ? 'justify-end' : 'justify-start'}`}
-                >
-                  {/* Sender Avatar for incoming group messages */}
-                  {!msg.isMe && (
-                    <div className={`w-7 h-7 rounded-xl ${meta.color} flex items-center justify-center text-white font-extrabold text-[10px] shrink-0 shadow-xs border ${isDarkMode ? 'border-slate-800' : 'border-slate-150'}`}>
-                      {meta.initials}
-                    </div>
-                  )}
-
-                  <div className={`flex flex-col ${msg.isMe ? 'items-end' : 'items-start'} max-w-[76%]`}>
-                    {/* Sender Name block */}
-                    {!msg.isMe && (
-                      <span className={`text-[9.5px] ml-1 mb-1 font-black ${nameColors[msg.sender] || 'text-blue-500'}`}>
-                        {msg.sender}
-                      </span>
-                    )}
-
-                    <div
-                      className={`px-4 py-2.5 rounded-2xl text-xs relative select-all flex flex-col justify-between ${
-                        msg.isMe
-                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white rounded-br-2xs shadow-sm shadow-blue-500/10'
-                          : isDarkMode
-                            ? 'bg-slate-900/90 border border-slate-800/90 text-slate-100 rounded-bl-2xs'
-                            : 'bg-white text-slate-800 rounded-bl-2xs border border-slate-200/50 shadow-2xs'
-                      }`}
-                    >
-                      <p className="leading-snug font-medium break-words whitespace-pre-wrap">{msg.text}</p>
-
-                      {/* Meta footer inside bubble */}
-                      <div className="flex items-center justify-end gap-1 mt-1 shrink-0 self-end">
-                        <span className={`text-[8.5px] ${msg.isMe ? 'text-blue-200' : 'text-slate-400'} font-mono font-medium`}>
-                          {msg.time || '14:24'}
-                        </span>
-                        {msg.isMe && (
-                          <CheckCheck size={11} className="text-sky-300 dark:text-sky-200 shrink-0" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+          {loading ? (
+            <div className="h-64 flex items-center justify-center">
+              <span className="text-slate-400 animate-pulse text-sm font-bold">Carregando histórico...</span>
+            </div>
+          ) : messages.length > 0 ? (
+            messages.map((msg) => (
+              <ChatBubble key={msg.id} message={msg} />
+            ))
           ) : (
             <div className="h-64 flex flex-col items-center justify-center text-center">
               <span className="text-3xl mb-2.5">👋</span>
@@ -519,6 +374,11 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
 
         {/* Message Input Bottom Panel with Embedded Emoji Popover & Hidden native file inputs */}
         <div className={`px-4 py-3 border-t shrink-0 z-10 ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+          {typingUsers.length > 0 && (
+            <div className="absolute -top-6 left-4 text-[10px] font-bold text-blue-500 animate-fade-in bg-white/80 dark:bg-slate-900/80 px-2 py-0.5 rounded-t-lg backdrop-blur-sm border border-b-0 border-slate-200 dark:border-slate-800">
+              {typingUsers.length === 1 ? `${typingUsers[0]} está digitando...` : `${typingUsers.join(' e ')} estão digitando...`}
+            </div>
+          )}
           <div className="flex flex-col gap-2 relative">
 
             {/* Interactive Custom Floating Emoji Picker Board */}
@@ -604,7 +464,16 @@ export function ChatTab({ user, onOpenProfile, isDarkMode = false }: ChatTabProp
                 <input
                   type="text"
                   value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
+                  onChange={(e) => {
+                    setInputText(e.target.value);
+                    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+                    typingTimeoutRef.current = setTimeout(() => {
+                      const username = authUser?.user_metadata?.username;
+                      if (username) {
+                        sendTyping(username);
+                      }
+                    }, 500);
+                  }}
                   placeholder="Digite sua mensagem acadêmica..."
                   className={`w-full rounded-2xl py-2 px-4 text-xs font-semibold outline-none border transition-all ${
                     isDarkMode

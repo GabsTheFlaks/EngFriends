@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { InstallPrompt } from './components/ui/InstallPrompt';
 import { AuthLayout } from './components/auth/AuthLayout';
 import { Login } from './components/auth/Login';
@@ -10,15 +11,34 @@ import { ProjTab } from './components/tabs/ProjTab';
 import { SistTab } from './components/tabs/SistTab';
 import { AjudaTab } from './components/tabs/AjudaTab';
 import { ProfileModal, UserProfile } from './components/profile/ProfileModal';
+import { Profile } from './pages/Profile';
 import toast from 'react-hot-toast';
 import { NotificationsDrawer, NotificationItem } from './components/layout/NotificationsDrawer';
 import { TabType } from './types';
 import { Bell, X, Info } from 'lucide-react';
+import { useAuth } from './hooks/useAuth';
+import { supabase } from './lib/supabaseClient';
 
-type ViewState = 'login' | 'register' | 'app';
+function RequireAuth({ children }: { children: React.ReactElement }) {
+  const { session, loading } = useAuth();
+  const location = useLocation();
 
-export default function App() {
-  const [currentView, setCurrentView] = useState<ViewState>('login');
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-eng-ice">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-eng-blue"></div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
+
+function MainApp() {
   const [activeTab, setActiveTab] = useState<TabType>('chat');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -129,7 +149,7 @@ export default function App() {
 
   // Background emitter that periodically fires simulated pushes if enabled
   useEffect(() => {
-    if (!isPeriodicPushEnabled || currentView !== 'app') return;
+    if (!isPeriodicPushEnabled) return;
 
     const pushSamples = [
       { title: 'Professor de Cálculo III', desc: 'Acaba de lançar as notas da P1 no SUAP. Média geral do curso de Engenharia foi 7.2.', cat: 'academic' },
@@ -146,53 +166,49 @@ export default function App() {
     }, 32000); // 32 seconds timer
 
     return () => clearInterval(interval);
-  }, [isPeriodicPushEnabled, currentView]);
+  }, [isPeriodicPushEnabled]);
 
+  const { user: authUser } = useAuth();
   const [user, setUser] = useState<UserProfile>({
-    name: 'Amanda Silveira',
+    name: 'Usuário',
     ra: '2024.12039.04',
     course: 'Engenharia de Software',
     period: '5º Período • Integral',
-    avatar: ''
+    avatar: '/avatars/avatar_0.svg'
   });
 
-  const handleLogin = () => setCurrentView('app');
-  const handleRegister = () => setCurrentView('app');
+  useEffect(() => {
+    if (authUser) {
+      const fetchProfile = async () => {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('username, avatar_index')
+          .eq('id', authUser.id)
+          .single();
+
+        if (data) {
+          const profileData = data as { username: string | null; avatar_index: number | null };
+          setUser(prev => ({
+            ...prev,
+            name: profileData.username || 'Usuário',
+            avatar: `/avatars/avatar_${profileData.avatar_index || 0}.svg`
+          }));
+        }
+      };
+
+      fetchProfile();
+    }
+  }, [authUser]);
 
   const handleDeleteAccount = () => {
     toast.success('Sua conta foi excluída com sucesso da base de dados local do Eng+.');
     setIsProfileOpen(false);
-    setCurrentView('register');
   };
 
   const handleLogout = () => {
     setIsProfileOpen(false);
-    setCurrentView('login');
   };
 
-  if (currentView === 'login') {
-    return (
-      <AuthLayout>
-        <Login
-          onNavigateRegister={() => setCurrentView('register')}
-          onLogin={handleLogin}
-        />
-      </AuthLayout>
-    );
-  }
-
-  if (currentView === 'register') {
-    return (
-      <AuthLayout>
-        <Register
-          onNavigateLogin={() => setCurrentView('login')}
-          onRegister={handleRegister}
-        />
-      </AuthLayout>
-    );
-  }
-
-  // App View
   return (
     <div className="relative overflow-hidden w-full h-[100dvh]">
       <MobileLayout
@@ -203,7 +219,7 @@ export default function App() {
         {activeTab === 'chat' && (
           <ChatTab
             user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenProfile={() => window.location.href = '/profile'}
             isDarkMode={isDarkMode}
           />
         )}
@@ -211,7 +227,7 @@ export default function App() {
         {activeTab === 'info' && (
           <InfoTab
             user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenProfile={() => window.location.href = '/profile'}
             isDarkMode={isDarkMode}
             unreadNotificationsCount={notificationsList.filter(n => !n.read).length}
             onOpenNotifications={() => setIsNotificationsOpen(true)}
@@ -220,21 +236,21 @@ export default function App() {
         {activeTab === 'proj' && (
           <ProjTab
             user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenProfile={() => window.location.href = '/profile'}
             isDarkMode={isDarkMode}
           />
         )}
         {activeTab === 'sist' && (
           <SistTab
             user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenProfile={() => window.location.href = '/profile'}
             isDarkMode={isDarkMode}
           />
         )}
         {activeTab === 'ajuda' && (
           <AjudaTab
             user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenProfile={() => window.location.href = '/profile'}
             isDarkMode={isDarkMode}
           />
         )}
@@ -331,5 +347,25 @@ export default function App() {
         onTogglePeriodicPush={() => setIsPeriodicPushEnabled(!isPeriodicPushEnabled)}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
+        <Route path="/register" element={<AuthLayout><Register /></AuthLayout>} />
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+        <Route
+          path="/"
+          element={
+            <RequireAuth>
+              <MainApp />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
