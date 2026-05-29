@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NotificationBell } from '../NotificationBell';
 import { HelpCircle, ChevronRight, Info, Lightbulb, MessageSquare, X, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 
@@ -29,7 +30,8 @@ export function AjudaTab({ user, onOpenProfile, isDarkMode = false }: AjudaTabPr
         <h1 className={`text-2xl font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-slate-800'}`}>Ajuda</h1>
 
         {/* USER PROFILE IN HELP HEADER */}
-        <button
+        <NotificationBell isDarkMode={isDarkMode} />
+            <button
           onClick={onOpenProfile}
           className={`w-8 h-8 rounded-full overflow-hidden border flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95 ${isDarkMode ? 'border-slate-750 bg-slate-800' : 'border-slate-200 bg-slate-100'}`}
           aria-label="Perfil do Usuário"
