@@ -1,5 +1,4 @@
-import React, { InputHTMLAttributes } from 'react';
-import { LucideIcon } from 'lucide-react';
+import React from 'react';
 
 type InputProps = React.ComponentProps<"input"> & {
   icon?: React.ElementType;

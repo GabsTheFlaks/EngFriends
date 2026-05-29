@@ -17,7 +17,7 @@ export function Register({ onNavigateLogin, onRegister }: RegisterProps) {
     <div className="flex flex-col items-center">
       <div className="mb-6 flex flex-col items-center">
         <div className="mb-3">
-          <AppLogo className="w-16 h-16" />
+          <AppLogo className="w-36 h-36" />
         </div>
         <h1 className="text-[22px] font-semibold text-slate-900 mt-2">Cadastro de aluno</h1>
       </div>

@@ -6,7 +6,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-eng-ice flex flex-col">
       {/* Top Header Bar */}
       <header className="w-full bg-white h-16 flex items-center justify-between px-6 md:px-8 border-b border-gray-200 shrink-0">
-        <span className="font-bold text-eng-blue tracking-tighter text-sm uppercase">ENG FRIENDS</span>
+        <span className="font-bold text-eng-blue tracking-tighter text-sm uppercase">ENG+</span>
       </header>
 
       {/* Centered Content Area */}

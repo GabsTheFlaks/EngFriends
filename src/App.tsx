@@ -1,335 +1,223 @@
 import React, { useState, useEffect } from 'react';
 import { InstallPrompt } from './components/ui/InstallPrompt';
-import { AuthLayout } from './components/auth/AuthLayout';
-import { Login } from './components/auth/Login';
-import { Register } from './components/auth/Register';
+import { Login } from './pages/Login';
 import { MobileLayout } from './components/layout/MobileLayout';
 import { ChatTab } from './components/tabs/ChatTab';
 import { InfoTab } from './components/tabs/InfoTab';
 import { ProjTab } from './components/tabs/ProjTab';
 import { SistTab } from './components/tabs/SistTab';
 import { AjudaTab } from './components/tabs/AjudaTab';
-import { ProfileModal, UserProfile } from './components/profile/ProfileModal';
-import toast from 'react-hot-toast';
-import { NotificationsDrawer, NotificationItem } from './components/layout/NotificationsDrawer';
+import { UserProfile } from './components/profile/ProfileModal';
+import { Profile } from './pages/Profile';
+import { useAuth } from './hooks/useAuth';
+import { supabase } from './lib/supabaseClient';
+import { NotificationsDrawer } from './components/layout/NotificationsDrawer';
 import { TabType } from './types';
-import { Bell, X, Info } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import { NotificationProvider } from './context/NotificationContext';
 
-type ViewState = 'login' | 'register' | 'app';
+type ViewState = 'login' | 'register' | 'app' | 'profile';
 
 export default function App() {
+  const { session, loading, signOut } = useAuth();
   const [currentView, setCurrentView] = useState<ViewState>('login');
   const [activeTab, setActiveTab] = useState<TabType>('chat');
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Real-time Push Notifications States
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [activeToast, setActiveToast] = useState<NotificationItem | null>(null);
-  const [isPeriodicPushEnabled, setIsPeriodicPushEnabled] = useState(false);
-
-  // Local Storage Hook for persistent notification items
-  const [notificationsList, setNotificationsList] = useState<NotificationItem[]>(() => {
-    const cached = localStorage.getItem('engplus_notifications');
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        return parsed.map((item: any) => ({
-          ...item,
-          timestamp: item.timestamp ? new Date(item.timestamp) : new Date()
-        }));
-      } catch (err) {
-        console.error('Falha ao recuperar notificações do localStorage', err);
-      }
-    }
-    return [
-      {
-        id: 'init-1',
-        title: 'Boas-vindas ao Eng+!',
-        description: 'Explore os canais acadêmicos e gerencie seus projetos com facilidade.',
-        time: 'Ontem',
-        read: true,
-        category: 'general',
-        timestamp: new Date(Date.now() - 24 * 3600 * 1000)
-      },
-      {
-        id: 'init-2',
-        title: 'Aula Prática no Laboratório',
-        description: 'O laboratório de fluidos está liberado para testes de viscosidade amanhã na sala 402 a partir das 14h.',
-        time: '5h atrás',
-        read: false,
-        category: 'academic',
-        timestamp: new Date(Date.now() - 5 * 3600 * 1000)
-      },
-      {
-        id: 'init-1.5',
-        title: 'Destaque: Coletivos Campus',
-        description: 'Não esqueça de passar na nossa aba de Coletivos para marcar presença.',
-        time: '6h atrás',
-        read: false,
-        category: 'general',
-        timestamp: new Date(Date.now() - 6 * 3600 * 1000)
-      },
-      {
-        id: 'init-3',
-        title: 'AeroDesign SAE • Novo Membro',
-        description: 'Rodrigo Costa solicitou ingresso na equipe de aerodinâmica.',
-        time: '1d atrás',
-        read: false,
-        category: 'project',
-        timestamp: new Date(Date.now() - 25 * 3600 * 1000)
-      }
-    ];
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('engfriends-dark-mode') === 'true';
   });
 
-  // Persist state to localstorage when modified
-  useEffect(() => {
-    localStorage.setItem('engplus_notifications', JSON.stringify(notificationsList));
-  }, [notificationsList]);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const triggerPushNotification = (title: string, description: string, category: NotificationItem['category']) => {
-    const newNotif: NotificationItem = {
-      id: Math.random().toString(36).substring(2, 9),
-      title,
-      description,
-      time: 'Agora mesmo',
-      read: false,
-      category,
-      timestamp: new Date()
-    };
-    setNotificationsList(prev => [newNotif, ...prev]);
-    setActiveToast(newNotif);
-
-    // Auto clear toast after 4.5 seconds
-    setTimeout(() => {
-      setActiveToast(prev => prev?.id === newNotif.id ? null : prev);
-    }, 4505);
-  };
-
-  const handleMarkAllAsRead = () => {
-    setNotificationsList(prev => {
-      const updated = prev.map(n => ({ ...n, read: true }));
-      localStorage.setItem('engplus_notifications', JSON.stringify(updated));
-      return updated;
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => {
+      const nextValue = !prev;
+      localStorage.setItem('engfriends-dark-mode', String(nextValue));
+      return nextValue;
     });
   };
 
-  const handleClearAll = () => {
-    setNotificationsList([]);
-    localStorage.setItem('engplus_notifications', JSON.stringify([]));
-  };
-
-  const handleToggleRead = (id: string) => {
-    setNotificationsList(prev => {
-      const updated = prev.map(n => n.id === id ? { ...n, read: !n.read } : n);
-      localStorage.setItem('engplus_notifications', JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  // Background emitter that periodically fires simulated pushes if enabled
   useEffect(() => {
-    if (!isPeriodicPushEnabled || currentView !== 'app') return;
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
-    const pushSamples = [
-      { title: 'Professor de Cálculo III', desc: 'Acaba de lançar as notas da P1 no SUAP. Média geral do curso de Engenharia foi 7.2.', cat: 'academic' },
-      { title: 'Mensagem de Gabriel Silva', desc: '"Alguém tem o relatório de mecânica dos sólidos pronto para nos basearmos?"', cat: 'chat' },
-      { title: 'Equipe de AeroDesign SAE', desc: 'Amanda Silveira editou o progresso do projeto "Baja SAE Aero" para 85%.', cat: 'project' },
-      { title: 'Oportunidade de Voluntariado', desc: 'IFSP divulga novas vagas de iniciação científica para o segundo semestre de Engenharia.', cat: 'academic' },
-      { title: 'Grupo de Estudos de Física II', desc: 'Sessão prática urgente agendada na biblioteca amanhã às 10:00.', cat: 'chat' },
-      { title: 'Hackathon do Campus 2026', desc: 'Inscrições abertas para o Hackathon de IoT do Centro Acadêmico.', cat: 'general' }
-    ] as const;
 
-    const interval = setInterval(() => {
-      const sample = pushSamples[Math.floor(Math.random() * pushSamples.length)];
-      triggerPushNotification(sample.title, sample.desc, sample.cat);
-    }, 32000); // 32 seconds timer
+  // Auth guards and Service Worker registration
+  useEffect(() => {
+    if (!loading) {
+      if (!session) {
+        if (currentView !== 'login' && currentView !== 'register') {
+          setCurrentView('login');
+        }
+      } else {
+        if (currentView === 'login' || currentView === 'register') {
+          setCurrentView('app');
+        }
 
-    return () => clearInterval(interval);
-  }, [isPeriodicPushEnabled, currentView]);
+        // Register Service Worker — push subscription is handled inside useAuth.ts
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('Service Worker Registrado.'))
+            .catch((err) => console.error('Erro ao registrar Service Worker:', err));
+        }
+      }
+    }
+  }, [session, loading, currentView]);
 
   const [user, setUser] = useState<UserProfile>({
-    name: 'Amanda Silveira',
-    ra: '2024.12039.04',
-    course: 'Engenharia de Software',
-    period: '5º Período • Integral',
+    name: 'Carregando...',
+    ra: '0000.00000.00',
+    course: 'Engenharia',
+    period: 'Carregando',
     avatar: ''
   });
 
-  const handleLogin = () => setCurrentView('app');
-  const handleRegister = () => setCurrentView('app');
+  // Load and sync real user profile from Supabase
+  useEffect(() => {
+    if (!session?.user) return;
 
-  const handleDeleteAccount = () => {
-    toast.success('Sua conta foi excluída com sucesso da base de dados local do Eng+.');
-    setIsProfileOpen(false);
-    setCurrentView('register');
-  };
+    const fetchProfile = async () => {
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('username, avatar_index, ra, course, period')
+          .eq('id', session.user.id)
+          .maybeSingle();
 
-  const handleLogout = () => {
-    setIsProfileOpen(false);
-    setCurrentView('login');
-  };
+        if (data) {
+          setUser({
+            name: data.username || session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'Aluno',
+            avatar: `/avatars/avatar_${data.avatar_index ?? 0}.png`,
+            ra: data.ra || '2026.0000.01',
+            course: data.course || 'Engenharia de Software',
+            period: data.period || '1º Período • Integral'
+          });
+        }
+      } catch (err) {
+        console.error('Falha ao ler perfil Supabase no App:', err);
+      }
+    };
 
-  if (currentView === 'login') {
+    fetchProfile();
+
+    // Channel ID fixo por user — sem Math.random() para evitar canais duplicados
+    const profileChannelId = `profile_changes_${session.user.id}`;
+    const profileChannel = supabase
+      .channel(profileChannelId)
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${session.user.id}` },
+        (payload) => {
+          const updated = payload.new as any;
+          setUser({
+            name: updated.username || session.user.user_metadata?.username || session.user.email?.split('@')[0] || 'Aluno',
+            avatar: `/avatars/avatar_${updated.avatar_index ?? 0}.png`,
+            ra: updated.ra || '2026.0000.01',
+            course: updated.course || 'Engenharia de Software',
+            period: updated.period || '1º Período • Integral'
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profileChannel);
+    };
+  }, [session]);
+
+  if (loading) {
     return (
-      <AuthLayout>
-        <Login
-          onNavigateRegister={() => setCurrentView('register')}
-          onLogin={handleLogin}
-        />
-      </AuthLayout>
-    );
-  }
-
-  if (currentView === 'register') {
-    return (
-      <AuthLayout>
-        <Register
-          onNavigateLogin={() => setCurrentView('login')}
-          onRegister={handleRegister}
-        />
-      </AuthLayout>
-    );
-  }
-
-  // App View
-  return (
-    <div className="relative overflow-hidden w-full h-[100dvh]">
-      <MobileLayout
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        isDarkMode={isDarkMode}
-      >
-        {activeTab === 'chat' && (
-          <ChatTab
-            user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
-            isDarkMode={isDarkMode}
-          />
-        )}
-        <InstallPrompt />
-        {activeTab === 'info' && (
-          <InfoTab
-            user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
-            isDarkMode={isDarkMode}
-            unreadNotificationsCount={notificationsList.filter(n => !n.read).length}
-            onOpenNotifications={() => setIsNotificationsOpen(true)}
-          />
-        )}
-        {activeTab === 'proj' && (
-          <ProjTab
-            user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
-            isDarkMode={isDarkMode}
-          />
-        )}
-        {activeTab === 'sist' && (
-          <SistTab
-            user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
-            isDarkMode={isDarkMode}
-          />
-        )}
-        {activeTab === 'ajuda' && (
-          <AjudaTab
-            user={user}
-            onOpenProfile={() => setIsProfileOpen(true)}
-            isDarkMode={isDarkMode}
-          />
-        )}
-      </MobileLayout>
-
-      {/* Real-time Slide-down Push Notification Toast */}
-      {activeToast && (
-        <div
-          onClick={() => {
-            setIsNotificationsOpen(true);
-            setActiveToast(null);
-          }}
-          className={`absolute top-4 left-4 right-4 z-[999] p-4 rounded-2xl border transition-all duration-300 shadow-2xl cursor-pointer flex gap-3 animate-slide-down ${
-            isDarkMode
-              ? 'bg-slate-900/95 border-slate-800 text-white backdrop-blur-md'
-              : 'bg-white/95 border-slate-200/80 text-slate-800 backdrop-blur-md shadow-lg shadow-slate-200/50'
-          }`}
-        >
-          {/* Glowing pulse ring indicator */}
-          <div className="relative shrink-0 flex items-center justify-center">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-              <Bell size={20} className="animate-wiggle" />
-            </div>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-          </div>
-
-          <div className="flex-1 min-w-0 text-left">
-            <div className="flex justify-between items-baseline">
-              <span className="text-[9px] font-black uppercase tracking-wider text-blue-500">
-                Push Real-time • Eng+
-              </span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveToast(null);
-                }}
-                className={`p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ${
-                  isDarkMode ? 'text-slate-500 hover:text-white' : 'text-slate-400 hover:text-slate-600'
-                }`}
-              >
-                <X size={12} />
-              </button>
-            </div>
-            <h4 className="text-xs font-bold leading-none mt-1.5 text-slate-900 dark:text-white truncate">
-              {activeToast.title}
-            </h4>
-            <p className="text-[10.5px] font-semibold leading-snug mt-1 text-slate-500 dark:text-slate-400">
-              {activeToast.description}
-            </p>
-          </div>
+      <div className={`min-h-screen w-full flex items-center justify-center transition-colors duration-300 ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-800'}`}>
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 size={36} className="animate-spin text-blue-600 dark:text-blue-400" />
+          <span className="text-sm font-semibold tracking-tight opacity-75">Sincronizando com Supabase...</span>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      <ProfileModal
-        isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
-        user={user}
-        onUpdateUser={setUser}
+  if (currentView === 'login' || currentView === 'register') {
+    return <Login />;
+  }
+
+  if (currentView === 'profile') {
+    return (
+      <Profile
+        user={session?.user}
+        signOut={signOut}
+        onBack={() => setCurrentView('app')}
         isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
-        onDeleteAccount={handleDeleteAccount}
-        onLogout={handleLogout}
-      />
-
-      <NotificationsDrawer
-        isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
-        notifications={notificationsList}
-        onMarkAllAsRead={handleMarkAllAsRead}
-        onClearAll={handleClearAll}
-        onToggleRead={handleToggleRead}
-        onTriggerTestPush={() => {
-          const titles = [
-            'Push Instantâneo de Teste',
-            'Nova Mensagem do Grupo',
-            'SUAP: Alerta Acadêmico',
-            'Inovação & Extensão'
-          ];
-          const descs = [
-            'Seu sistema de push notifications em tempo real está configurado e pronto para produção!',
-            ' Amanda Silveira: "Reunião de Engenharia de Software agendada para sexta, tragam os notebooks!"',
-            'Lembrete: Prazo final para envio dos relatórios parciais de laboratório encerra hoje às 23:59.',
-            'O coordenador de Engenharia aprovou o seu projeto de iniciação científica para o edital 2026.'
-          ];
-          const cats = ['general', 'chat', 'academic', 'project'] as const;
-
-          const idx = Math.floor(Math.random() * titles.length);
-          triggerPushNotification(titles[idx], descs[idx], cats[idx]);
+        onToggleDarkMode={toggleDarkMode}
+        onProfileUpdate={(updated) => {
+          setUser({
+            name: updated.username,
+            avatar: `/avatars/avatar_${updated.avatar_index}.svg`,
+            ra: updated.ra,
+            course: updated.course,
+            period: updated.period
+          });
         }}
-        isDarkMode={isDarkMode}
-        isPeriodicPushEnabled={isPeriodicPushEnabled}
-        onTogglePeriodicPush={() => setIsPeriodicPushEnabled(!isPeriodicPushEnabled)}
       />
-    </div>
+    );
+  }
+
+  return (
+    <NotificationProvider>
+      <div className="relative overflow-hidden w-full h-[100dvh]">
+        <MobileLayout
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          isDarkMode={isDarkMode}
+        >
+          {activeTab === 'chat' && (
+            <ChatTab
+              user={user}
+              onOpenProfile={() => setCurrentView('profile')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+          <InstallPrompt />
+          {activeTab === 'info' && (
+            <InfoTab
+              user={user}
+              onOpenProfile={() => setCurrentView('profile')}
+              isDarkMode={isDarkMode}
+              unreadNotificationsCount={0}
+              onOpenNotifications={() => setIsNotificationsOpen(true)}
+            />
+          )}
+          {activeTab === 'proj' && (
+            <ProjTab
+              user={user}
+              onOpenProfile={() => setCurrentView('profile')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+          {activeTab === 'sist' && (
+            <SistTab
+              user={user}
+              onOpenProfile={() => setCurrentView('profile')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+          {activeTab === 'ajuda' && (
+            <AjudaTab
+              user={user}
+              onOpenProfile={() => setCurrentView('profile')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+        </MobileLayout>
+
+        <NotificationsDrawer
+          isOpen={isNotificationsOpen}
+          onClose={() => setIsNotificationsOpen(false)}
+          isDarkMode={isDarkMode}
+        />
+      </div>
+    </NotificationProvider>
   );
 }

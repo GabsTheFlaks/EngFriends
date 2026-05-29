@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Bell, Calendar, Megaphone, BookOpen, Users, Clock, Lightbulb, Heart, Sparkles, AlertCircle, X, ChevronRight, Info } from 'lucide-react';
+import { Calendar, Megaphone, BookOpen, Users, Clock, Lightbulb, Heart, Sparkles, X, Info } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
+import { NotificationBell } from '../NotificationBell';
 
 type SubView = 'coletivos' | 'mural';
 
@@ -16,8 +17,8 @@ export function InfoTab({
   user,
   onOpenProfile,
   isDarkMode = false,
-  unreadNotificationsCount = 0,
-  onOpenNotifications
+  unreadNotificationsCount: _unreadNotificationsCount = 0,
+  onOpenNotifications: _onOpenNotifications
 }: InfoTabProps) {
   const [currentSubView, setCurrentSubView] = useState<SubView>('coletivos');
   const [selectedItem, setSelectedItem] = useState<{ title: string; content: string; type: string } | null>(null);
@@ -55,19 +56,7 @@ export function InfoTab({
             )}
           </button>
 
-          <button
-            onClick={onOpenNotifications}
-            className={`cursor-pointer hover:scale-110 active:scale-95 relative p-1.5 rounded-full transition-colors ${isDarkMode ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white' : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-100 shadow-sm'}`}
-            title="Abrir Notificações"
-            aria-label="Abrir Notificações"
-          >
-            <Bell size={20} className={unreadNotificationsCount > 0 ? "animate-wiggle" : ""} />
-            {unreadNotificationsCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-red-500 rounded-full border border-white text-[8px] font-black text-white flex items-center justify-center animate-pulse">
-                {unreadNotificationsCount}
-              </span>
-            )}
-          </button>
+          <NotificationBell isDarkMode={isDarkMode} />
         </div>
       </div>
 

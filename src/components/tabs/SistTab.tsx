@@ -162,7 +162,7 @@ export function SistTab({ user, onOpenProfile, isDarkMode = false }: SistTabProp
                 <button
                   onClick={closeOptionModal}
                   className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
-                  aria-label="Fecar modal"
+                  aria-label="Fechar modal"
                 >
                   <X size={16} />
                 </button>

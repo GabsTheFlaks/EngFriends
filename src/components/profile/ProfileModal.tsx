@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Camera, Eye, EyeOff, Moon, Sun, ShieldAlert, CheckCircle, ChevronRight, GraduationCap, Award, BookOpen, Clock, Trash2, LogOut, Loader2, HelpCircle } from 'lucide-react';
+import { X, Camera, Eye, EyeOff, Moon, Sun, ShieldAlert, CheckCircle, GraduationCap, Award, BookOpen, Clock, Trash2, LogOut, Loader2, HelpCircle } from 'lucide-react';
 
 export interface UserProfile {
   name: string;

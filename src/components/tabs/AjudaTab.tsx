@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronRight, Info, Lightbulb, MessageSquare, X, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { HelpCircle, ChevronRight, Info, Lightbulb, MessageSquare, X, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { UserProfile } from '../profile/ProfileModal';
 
 interface AjudaTabProps {
@@ -177,7 +177,7 @@ export function AjudaTab({ user, onOpenProfile, isDarkMode = false }: AjudaTabPr
               <button
                 onClick={closeTopic}
                 className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-colors"
-                aria-label="Fecar modal"
+                aria-label="Fechar modal"
               >
                 <X size={16} />
               </button>

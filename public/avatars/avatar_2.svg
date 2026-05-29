@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#bg2)" />
+  <!-- Body/Neck -->
+  <path d="M30 85 C30 70, 70 70, 70 85 Z" fill="#3B82F6" />
+  <path d="M44 65 h12 v15 h-12 Z" fill="#935A38" />
+  <!-- Face -->
+  <circle cx="50" cy="50" r="20" fill="#935A38" />
+  <!-- Curly Hair (Circles group) -->
+  <g fill="#111827">
+    <circle cx="50" cy="30" r="8" />
+    <circle cx="42" cy="32" r="8" />
+    <circle cx="58" cy="32" r="8" />
+    <circle cx="35" cy="37" r="8" />
+    <circle cx="65" cy="37" r="8" />
+    <circle cx="31" cy="45" r="7" />
+    <circle cx="69" cy="45" r="7" />
+  </g>
+  <!-- Eyes -->
+  <circle cx="43" cy="50" r="2.5" fill="#FFFFFF" />
+  <circle cx="57" cy="50" r="2.5" fill="#FFFFFF" />
+  <circle cx="43" cy="50" r="1.2" fill="#111827" />
+  <circle cx="57" cy="50" r="1.2" fill="#111827" />
+  <!-- Smile -->
+  <path d="M45 60 Q50 65 55 60" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>

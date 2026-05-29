@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#B91C1C" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#bg4)" />
+  <!-- Spiked Blonde Hair (back) -->
+  <path d="M30 40 L35 25 L43 28 L50 20 L57 28 L65 25 L70 40 Z" fill="#FBBF24" />
+  <!-- Body/Neck -->
+  <path d="M30 85 C30 70, 70 70, 70 85 Z" fill="#1E293B" />
+  <path d="M44 65 h12 v15 h-12 Z" fill="#FFD8A8" />
+  <!-- Face -->
+  <circle cx="50" cy="50" r="20" fill="#FFD8A8" />
+  <!-- Hair Base (front) -->
+  <path d="M31 43 L37 38 L45 42 L52 37 L60 41 L69 43 C69 35, 31 35, 31 43 Z" fill="#FBBF24" />
+  <!-- Eyes -->
+  <circle cx="43" cy="49" r="2.5" fill="#1E293B" />
+  <circle cx="57" cy="49" r="2.5" fill="#1E293B" />
+  <!-- Smile -->
+  <path d="M46 58 Q50 62 54 58" stroke="#1E293B" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>

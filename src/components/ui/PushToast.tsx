@@ -1,9 +1,9 @@
 import React from 'react';
 import { Bell, X } from 'lucide-react';
-import { NotificationItem } from '../layout/NotificationsDrawer';
+import { AppNotification } from '../../hooks/useNotifications';
 
 interface PushToastProps {
-  toast: NotificationItem | null;
+  toast: AppNotification | null;
   onClose: () => void;
   onClick: () => void;
   isDarkMode: boolean;
@@ -52,7 +52,7 @@ export function PushToast({ toast, onClose, onClick, isDarkMode }: PushToastProp
           {toast.title}
         </h4>
         <p className="text-[10.5px] font-semibold leading-snug mt-1 text-slate-500 dark:text-slate-400">
-          {toast.description}
+          {toast.body}
         </p>
       </div>
     </div>
