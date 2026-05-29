@@ -4,8 +4,8 @@
   "description": "A melhor plataforma de estudo, ferramentas, fóruns e chat para estudantes de engenharia.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#1e3a8a",
+  "background_color": "#F0F4F8",
+  "theme_color": "#0A2540",
   "orientation": "portrait",
   "categories": [
     "education",
