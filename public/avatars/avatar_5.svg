@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="100%" stop-color="#0891B2" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#bg5)" />
+  <!-- Bob Hair (Back/Sides) -->
+  <path d="M29 45 C24 60, 24 75, 29 75 H71 C76 75, 76 60, 71 45 Z" fill="#F472B6" />
+  <!-- Body/Neck -->
+  <path d="M30 85 C30 72, 70 72, 70 85 Z" fill="#4F46E5" />
+  <path d="M44 65 h12 v15 h-12 Z" fill="#FED7AA" />
+  <!-- Face -->
+  <circle cx="50" cy="50" r="19" fill="#FED7AA" />
+  <!-- Franja -->
+  <path d="M30 42 C35 32, 65 32, 70 42 C62 36, 38 36, 30 42 Z" fill="#F472B6" />
+  <!-- Eyes -->
+  <circle cx="43" cy="49" r="2.5" fill="#1E293B" />
+  <circle cx="57" cy="49" r="2.5" fill="#1E293B" />
+  <!-- Smile -->
+  <path d="M46 58 Q50 62 54 58" stroke="#1E293B" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>

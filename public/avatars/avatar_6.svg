@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EA580C" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#bg6)" />
+  <!-- Body/Neck -->
+  <path d="M30 85 C30 70, 70 70, 70 85 Z" fill="#059669" />
+  <path d="M44 65 h12 v15 h-12 Z" fill="#FDBA74" />
+  <!-- Face -->
+  <circle cx="50" cy="50" r="20" fill="#FDBA74" />
+  <!-- Brown Sideburns -->
+  <path d="M30 42 L32 50 L35 50 L33 42 Z" fill="#78350F" />
+  <path d="M70 42 L68 50 L65 50 L67 42 Z" fill="#78350F" />
+  <!-- Beanie (Gorro) -->
+  <path d="M30 43 C30 25, 70 25, 70 43 Z" fill="#1E293B" />
+  <!-- Beanie Fold -->
+  <rect x="27" y="38" width="46" height="7" rx="3" fill="#334155" />
+  <!-- Beanie Pom-pom -->
+  <circle cx="50" cy="22" r="5" fill="#475569" />
+  <!-- Eyes -->
+  <circle cx="43" cy="50" r="2.5" fill="#1E293B" />
+  <circle cx="57" cy="50" r="2.5" fill="#1E293B" />
+  <!-- Smile -->
+  <path d="M46 59 Q50 63 54 59" stroke="#1E293B" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>

@@ -1,0 +1,13 @@
+name = "engfriends-push-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+VAPID_SUBJECT = "mailto:contato@engfriends.app"
+
+# Secrets configurados via CLI (nunca ficam aqui):
+# SUPABASE_URL
+# SUPABASE_SERVICE_ROLE_KEY
+# VAPID_PUBLIC_KEY
+# VAPID_PRIVATE_KEY

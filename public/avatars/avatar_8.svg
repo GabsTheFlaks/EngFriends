@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bg8" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" rx="30" fill="url(#bg8)" />
+  <!-- Hoodie (Capuz) Back -->
+  <path d="M26 85 C26 65, 74 65, 74 85 Z" fill="#374151" />
+  <!-- Body/Neck -->
+  <path d="M44 65 h12 v15 h-12 Z" fill="#FDBA74" />
+  <!-- Face -->
+  <circle cx="50" cy="50" r="20" fill="#FDBA74" />
+  <!-- Black Hair (front) -->
+  <path d="M30 45 C30 25, 70 25, 70 45 C65 40, 35 40, 30 45 Z" fill="#111827" />
+  <!-- Hoodie Front Collar -->
+  <path d="M32 85 L42 70 L58 70 L68 85 Z" fill="#4B5563" stroke="#1F2937" stroke-width="2" />
+  <!-- Eyes -->
+  <circle cx="43" cy="50" r="2.5" fill="#1E293B" />
+  <circle cx="57" cy="50" r="2.5" fill="#1E293B" />
+  <!-- Smile -->
+  <path d="M46 59 Q50 63 54 59" stroke="#1E293B" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>
